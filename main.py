@@ -2,11 +2,15 @@ import os
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
+from PIL import Image
+from io import StringIO
 
 
 class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write("Hello world")
+    def post(self):
+        file_body = self.request.files['image'][0]['body']
+        img = Image.open(StringIO(file_body))
+        self.write(str(img.size[0]) + ":" + str(img.size[1]))
 
 
 def main():
