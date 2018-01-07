@@ -80,7 +80,9 @@ class MainHandler(tornado.web.RequestHandler):
             caption = max(captions, key=lambda cap: float(cap['confidence']))['text']
             del meta['captions']
             meta['caption'] = caption.replace('the camera', 'the user')
-            self.write(json.dumps({'meta': meta , 'blocks': values}))
+            dump = json.dumps({'meta': meta , 'blocks': values})
+            print(dump)
+            self.write(dump)
 
         except Exception as e:
             self.write('Invalid Image!' + '\n' + str(e))
