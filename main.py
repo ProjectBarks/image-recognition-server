@@ -4,6 +4,8 @@ import tornado.ioloop
 import tornado.web
 
 import json
+import re
+import base64
 
 from nltk.corpus import wordnet
 from PIL import Image
@@ -30,8 +32,8 @@ class MainHandler(tornado.web.RequestHandler):
             return output
 
         try:
-            file_body = self.request.files['image'][0]['body']
-            img = Image.open(BytesIO(file_body))
+            image_data = re.sub('^data:image/.+;base64,', '', self.request.body.decode('utf-8'))
+            img = Image.open(BytesIO(base64.b64decode(image_data)))
 
             columns, rows, min_confidence = 5, 2, 0.5
             width, height = int(img.size[0] / columns), int(img.size[1] / rows)
