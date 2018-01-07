@@ -75,7 +75,12 @@ class MainHandler(tornado.web.RequestHandler):
                     new_word_list.append(word['name'])
                 values.append({ 'tags': new_word_list, 'position': keys[idx]})
 
-            self.write(json.dumps({'meta': request_data[0].json().get('description', {}), 'blocks': values}))
+            meta = request_data[0].json().get('description', {})
+            captions = meta.get('captions', {'text': 'You are in a room', 'confidence': 0.5})
+            caption = max(captions, key=lambda cap: cap['confidence'])['text']
+            del meta['captions']
+            meta['caption'] = caption.replace('the camera', 'the person')
+            self.write(json.dumps({'meta': meta , 'blocks': values}))
 
         except Exception as e:
             self.write('Invalid Image!' + '\n' + str(e))
