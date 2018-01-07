@@ -35,7 +35,8 @@ class MainHandler(tornado.web.RequestHandler):
             image_data = re.sub('^data:image/.+;base64,', '', self.request.body.decode('utf-8'))
             img = Image.open(BytesIO(base64.b64decode(image_data)))
 
-            columns, rows, min_confidence = 5, 2, 0.5
+            columns, rows, min_confidence = int(self.get_argument("columns", 2)), int(self.get_argument("rows", 2)), float(self.get_argument("confidence", 0.5))
+            print('%d Columns, %d Rows, %d Confidence' % (columns, rows, min_confidence * 100))
             width, height = int(img.size[0] / columns), int(img.size[1] / rows)
             keys, requests = [], []
             requests.append(grequests.post(
